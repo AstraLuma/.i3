@@ -132,6 +132,23 @@ exec --no-startup-id xautolock -time 15 -locker '~/.i3/fuzzlock' &
 exec --no-startup-id xset dpms 1800 0 0
 exec --no-startup-id ~/.i3/disable-standby-fs.py
 
+
+# Multimedia Keys
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 0 -- +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 0 -- -5% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle # mute sound
+
+# Sreen brightness controls
+bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
 # Special window settings
 # Chrome's app list: Default to float (esp since it poofs when it looses focus)
 for_window [instance="chrome_app_list"] floating enable
