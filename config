@@ -152,3 +152,5 @@ bindsym XF86AudioPrev exec playerctl previous
 # Special window settings
 # Chrome's app list: Default to float (esp since it poofs when it looses focus)
 for_window [instance="chrome_app_list"] floating enable
+# New google hangouts: Sizes wrong, but at least it's not taking up space.
+for_window [instance="crx_knipolnnllmklapflnccelgolnpehhpl"] floating enable
