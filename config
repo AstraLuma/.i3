@@ -118,6 +118,9 @@ bar {
         status_command i3status
 }
 
+# Password Manager
+bindsym $mod+p exec --no-startup-id /usr/share/doc/pass/examples/dmenu/passmenu
+
 # Basic services
 exec nm-applet
 exec --no-startup-id start-pulseaudio-x11
@@ -129,7 +132,7 @@ exec_always feh --bg-fill "`find ~/Dropbox/wallpaper |shuf|tail -n 1`"
 
 # Screen lock things
 exec --no-startup-id xautolock -time 15 -locker '~/.i3/fuzzlock' &
-exec --no-startup-id xset dpms 1800 0 0
+exec --no-startup-id xset dpms 0 0 0
 exec --no-startup-id ~/.i3/disable-standby-fs.py
 
 

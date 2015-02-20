@@ -18,3 +18,6 @@ Most of these can be had from your package manager.
 * `scrot`
 * `xautolock`
 * `xset`
+* `gpg-agent`
+* [`pass`](http://www.passwordstore.org/)
+* `xdotool`
