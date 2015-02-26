@@ -12,7 +12,8 @@ Requirements
 Most of these can be had from your package manager.
 
 * i3 (obviously)
-* [i3ipc](https://github.com/acrisci/i3ipc-python) (currently from git)
+* Python 3
+* i3ipc (from PyPI)
 * ImageMagick
 * `feh`
 * `scrot`
