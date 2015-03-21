@@ -1,2 +1,2 @@
 #!/bin/sh
-exec i3lock -dnti `find ~/Dropbox/wallpaper -iname "*.png" |shuf|tail -n 1`
+exec i3lock -dnti "`find ~/Dropbox/wallpaper -iname "*.png" |shuf|tail -n 1`"
