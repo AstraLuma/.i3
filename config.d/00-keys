@@ -92,53 +92,8 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Session Action' -b 'Logout' 'i3-msg exit' -b 'Switch User' 'dm-tool switch-to-greeter'"
 
-# resize window (you can also use the mouse for that)
-mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
-
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym semicolon resize grow width 10 px or 10 ppt
-
-        # back to normal: Enter or Escape
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-bindsym $mod+r mode "resize"
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-        status_command i3status -c ~/.i3/i3status.conf
-        font pango:DejaVu Sans Mono, FontAwesome 8
-}
-
-# Password Manager
-bindsym $mod+p exec --no-startup-id /usr/share/doc/pass/examples/dmenu/passmenu
-
 # Python console, because I use it enough
 #bindsym $mod+??? exec gnome-terminal -e python3
-
-# Basic services
-exec nm-applet
-exec --no-startup-id start-pulseaudio-x11
-exec --no-startup-id dropbox start
-exec blueman-applet
-
-# Wallpaper
-exec_always feh --bg-fill "`find ~/Dropbox/wallpaper |shuf|tail -n 1`"
-
-# Screen lock things
-exec --no-startup-id xautolock -time 15 -locker '~/.i3/fuzzlock' &
-exec --no-startup-id xset dpms 0 0 0
-exec --no-startup-id ~/.i3/disable-standby-fs.py
-
 
 # Multimedia Keys
 # Pulse Audio controls
@@ -155,9 +110,3 @@ bindsym XF86AudioPlay exec playerctl play
 bindsym XF86AudioPause exec playerctl pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
-
-# Special window settings
-# Chrome's app list: Default to float (esp since it poofs when it looses focus)
-for_window [instance="chrome_app_list"] floating enable
-# New google hangouts: Sizes wrong, but at least it's not taking up space.
-for_window [instance="crx_knipolnnllmklapflnccelgolnpehhpl"] floating enable

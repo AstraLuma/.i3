@@ -1,0 +1,5 @@
+# Screen lock things
+exec --no-startup-id xautolock -time 15 -locker '~/.i3/fuzzlock' &
+exec --no-startup-id xset dpms 0 0 0
+exec --no-startup-id ~/.i3/disable-standby-fs.py
+

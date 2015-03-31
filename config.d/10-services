@@ -1,0 +1,6 @@
+# Basic services
+exec nm-applet
+exec --no-startup-id start-pulseaudio-x11
+exec --no-startup-id dropbox start
+exec blueman-applet
+

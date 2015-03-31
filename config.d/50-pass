@@ -1,0 +1,3 @@
+# Password Manager
+bindsym $mod+p exec --no-startup-id /usr/share/doc/pass/examples/dmenu/passmenu
+
