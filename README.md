@@ -22,3 +22,12 @@ Most of these can be had from your package manager.
 * `gpg-agent`
 * [`pass`](http://www.passwordstore.org/)
 * `xdotool`
+* GNU `make`
+
+Setup
+-----
+
+1. Check out this repo into `~/.i3`
+2. `cd` into it
+3. Run `make` to generate config file
+4. Start i3
