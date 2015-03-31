@@ -122,6 +122,9 @@ bar {
 # Password Manager
 bindsym $mod+p exec --no-startup-id /usr/share/doc/pass/examples/dmenu/passmenu
 
+# Python console, because I use it enough
+#bindsym $mod+??? exec gnome-terminal -e python3
+
 # Basic services
 exec nm-applet
 exec --no-startup-id start-pulseaudio-x11
