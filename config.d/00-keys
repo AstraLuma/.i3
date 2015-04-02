@@ -19,7 +19,7 @@ bindsym $mod+Shift+q kill
 # Simple listing of path (plain dmenu)
 bindsym $mod+Shift+d exec dmenu_run
 # "User friendly" listing of desktop files
-bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
 # Chrome's app list (see below for floating hack for this to work)
 bindsym $mod+Ctrl+d exec google-chrome --show-app-list
 

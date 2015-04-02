@@ -23,6 +23,7 @@ Most of these can be had from your package manager.
 * [`pass`](http://www.passwordstore.org/)
 * `xdotool`
 * GNU `make`
+* [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
 
 Setup
 -----
