@@ -23,6 +23,7 @@ Most of these can be had from your package manager.
 * [`pass`](http://www.passwordstore.org/)
 * `xdotool`
 * GNU `make`
+* Font Awesome (Debian: `fonts-font-awesome`)
 * [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
 
 Setup
@@ -32,3 +33,7 @@ Setup
 2. `cd` into it
 3. Run `make` to generate config file
 4. Start i3
+
+Other recomendations (These are, in fact, totally optional):
+
+* (Debian) Run `update-alternatives --config dmenu` and select `dmenu.xft` for better font support
