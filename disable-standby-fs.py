@@ -29,10 +29,12 @@ class StackManager(set):
                 print("Disabling screen features")
                 call(['xset', 's', 'off'])
                 call(['xset', '-dpms'])
+                call(['xautolock', '-disable'])
             else:
                 print("Enabling screen features")
                 call(['xset', 's', 'on'])
                 call(['xset', '+dpms'])
+                call(['xautolock', '-enable'])
             self._oldlen = len(self)
 
     def add(self, item):

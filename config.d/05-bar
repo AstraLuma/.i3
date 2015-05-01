@@ -5,3 +5,8 @@ bar {
         font pango:DejaVu Sans Mono, FontAwesome 8
 }
 
+bar {
+	status_command ~/code/k5dstatus/k5-dstatus -c ~/.i3/k5dstatus.conf 2>/tmp/k5log
+	tray_output none
+	workspace_buttons no
+}
