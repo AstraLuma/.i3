@@ -14,17 +14,13 @@ Most of these can be had from your package manager.
 * i3 (obviously)
 * Python 3
 * i3ipc (from PyPI)
-* ImageMagick
 * `feh`
-* `scrot`
 * `xautolock`
 * `xset`
-* `gpg-agent`
-* [`pass`](http://www.passwordstore.org/)
-* `xdotool`
 * GNU `make`
 * Font Awesome (Debian: `fonts-font-awesome`)
 * [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
+* Gnome Keyring
 
 Setup
 -----
@@ -37,3 +33,5 @@ Setup
 Other recomendations (These are, in fact, totally optional):
 
 * (Debian) Run `update-alternatives --config dmenu` and select `dmenu.xft` for better font support
+* Run `make install` to symlink this xsession into your home directory
+* Configure autologin in your DM (if you use my xsession)
