@@ -20,7 +20,7 @@ Most of these can be had from your package manager.
 * Font Awesome (Debian: `fonts-font-awesome`)
 * [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
 * Gnome Keyring
-* `xss`
+* [`xss`](http://woozle.org/~neale/src/xss.html)
 
 Setup
 -----
