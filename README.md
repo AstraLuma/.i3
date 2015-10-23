@@ -15,12 +15,12 @@ Most of these can be had from your package manager.
 * Python 3
 * i3ipc (from PyPI)
 * `feh`
-* `xautolock`
 * `xset`
 * GNU `make`
 * Font Awesome (Debian: `fonts-font-awesome`)
 * [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
 * Gnome Keyring
+* `xss`
 
 Setup
 -----
