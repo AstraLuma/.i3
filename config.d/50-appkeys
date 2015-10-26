@@ -11,3 +11,5 @@ bindsym $mod+Ctrl+d exec google-chrome --show-app-list
 
 # Python console, because I use it enough
 bindsym $mod+p exec gnome-terminal -e python3
+
+bindsym $mod+t exec ~/.i3/zmensh

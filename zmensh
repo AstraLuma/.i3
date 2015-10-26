@@ -1,0 +1,5 @@
+#!/usr/bin/zsh
+# Assumes the 'z' Oh My Zsh plugin is in use
+
+cd $(eval echo `cut -d '|' -f 1 ~/.z|sort|dmenu`)
+exec i3-sensible-terminal
