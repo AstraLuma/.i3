@@ -13,3 +13,8 @@ bindsym XF86AudioPlay exec playerctl play
 bindsym XF86AudioPause exec playerctl pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
+
+# Display
+bindsym XF86Display exec xrandr --output VGA1 --auto --output DVI1 --auto
+
+bindsym XF86ScreenSaver exec ~/.i3/lock
