@@ -1,5 +1,8 @@
 #!/usr/bin/zsh
 # Assumes the 'z' Oh My Zsh plugin is in use
 
+. ~/.oh-my-zsh/plugins/z/z.sh
+
 cd $(eval echo `cut -d '|' -f 1 ~/.z|sort|dmenu`)
+_z --add $PWD
 exec i3-sensible-terminal
