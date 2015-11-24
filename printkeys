@@ -6,15 +6,31 @@ Prints out the keymap for i3, dunst.
 import re
 import configparser
 
-def printkey(key, action):
-    print("\t{}:\t{}".format(key, action))
 
+class PlaintextPrinter:
+    class section:
+        def __init__(self, name):
+            self.name = name
+
+        def __enter__(self):
+            print(self.name+':')
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+    def key(self, key, action):
+        print("\t{}:\t{}".format(key, action))
+
+output = PlaintextPrinter()
+
+
+# i3 Keys
 def i3_subvars(vars, line):
     def lookup(match):
         return vars.get(match.group(1), match.group(0))
     return re.sub(r'\$(\w+)', lookup, line)
 
-# i3 Keys
 # TODO: Find a real i3 configuration parser
 # I solved my problem with 4 regex's. Do I have 5 problems now?
 SETVAR = re.compile(r'set\s+(\S+)\s+(.+)')
@@ -51,9 +67,9 @@ for l in open('config'):
         continue
 
 for mode, keys in sorted(i3keys.items(), key=lambda i: i[0] if i[0] is not None else ""):
-    print('i3[{}]:'.format(mode))
-    for key, action in sorted(keys.items(), key=lambda i: i[0]):
-        printkey(key, action)
+    with output.section('i3' if mode is None else 'i3::'+mode):
+        for key, action in sorted(keys.items(), key=lambda i: i[0]):
+            output.key(key, action)
 
 
 # dunst keys
@@ -61,7 +77,7 @@ for mode, keys in sorted(i3keys.items(), key=lambda i: i[0] if i[0] is not None 
 dunst = configparser.ConfigParser()
 dunst.read('dunstrc')
 
-print('dunst:')
-for action in ('close', 'close_all', 'history', 'context'):
-    key = dunst['shortcuts'][action]
-    printkey(key, action)
+with output.section('dunst'):
+    for action in ('close', 'close_all', 'history', 'context'):
+        key = dunst['shortcuts'][action]
+        output.key(key, action)
