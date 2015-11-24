@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+"""
+Prints out the keymap for i3, dunst.
+"""
+
+import re
+import configparser
+
+def printkey(key, action):
+    print("\t{}:\t{}".format(key, action))
+
+def i3_subvars(vars, line):
+    def lookup(match):
+        return vars.get(match.group(1), match.group(0))
+    return re.sub(r'\$(\w+)', lookup, line)
+
+# i3 Keys
+# TODO: Find a real i3 configuration parser
+# I solved my problem with 4 regex's. Do I have 5 problems now?
+SETVAR = re.compile(r'set\s+(\S+)\s+(.+)')
+BINDKEY = re.compile(r'bindsym\s+(\S+)\s+(.+)')
+STARTMODE = re.compile(r'mode\s+(\S+)\s+{')
+ENDMODE = re.compile(r'}')
+
+i3vars = {}
+i3mode = None
+i3keys = {None: {}}
+for l in open('config'):
+    l = l.strip()
+    m = BINDKEY.match(l)
+    if m:
+        key, action = m.groups()
+        key = i3_subvars(i3vars, key)
+        i3keys[i3mode][key] = action
+        continue
+    m = SETVAR.match(l)
+    if m:
+        name, value = m.groups()
+        i3vars[name[1:]] = value
+        continue
+    m = STARTMODE.match(l)
+    if m:
+        name, = m.groups()
+        name = name.strip('"')
+        i3keys.setdefault(name, {})
+        i3mode = name
+        continue
+    m = ENDMODE.match(l)
+    if m:
+        i3mode = None
+        continue
+
+for mode, keys in sorted(i3keys.items(), key=lambda i: i[0] if i[0] is not None else ""):
+    print('i3[{}]:'.format(mode))
+    for key, action in sorted(keys.items(), key=lambda i: i[0]):
+        printkey(key, action)
+
+
+# dunst keys
+
+dunst = configparser.ConfigParser()
+dunst.read('dunstrc')
+
+print('dunst:')
+for action in ('close', 'close_all', 'history', 'context'):
+    key = dunst['shortcuts'][action]
+    printkey(key, action)
