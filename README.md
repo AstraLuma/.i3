@@ -21,6 +21,7 @@ Most of these can be had from your package manager.
 * [`j4-dmenu-desktop`](https://github.com/enkore/j4-dmenu-desktop)
 * Gnome Keyring
 * [`xss`](http://woozle.org/~neale/src/xss.html)
+* [`playerctl`](https://github.com/acrisci/playerctl)
 
 Setup
 -----
