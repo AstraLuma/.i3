@@ -3,4 +3,6 @@ config: config.d/*
 	i3-msg reload
 
 install: config
-	ln -s $(realpath xsession) ~/.xsession
+	ln -fs $(realpath xsession) ~/.xsession
+	mkdir -p ~/.config/dunst
+	ln -fs $(realpath dunstrc) ~/.config/dunst/dunstrc
