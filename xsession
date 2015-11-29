@@ -1,7 +1,7 @@
 #!/bin/sh
 
 setxkbmap -option ctrl:nocaps
-dbus-launch --sh-syntax | . /dev/stdin
+# dbus, ibus already in Xsession.d
 gnome-keyring-daemon -d
 i3lock -i ~/.i3/login.png
 exec i3
