@@ -2,7 +2,7 @@
 ===
 My [i3](http://i3wm.org/) configuration and scripts. My goal is to build up a fully-featured desktop environment based on i3.
 
-* Screen locking for security
+* Screen locking
 * Power management
 * Basic desktop daemons: PulseAudio, NetworkManager, Bluetooth, Dropbox
 * Wallpaper (from dropbox)
@@ -33,6 +33,6 @@ Setup
 
 Other recomendations (These are, in fact, totally optional):
 
-* (Debian) Run `update-alternatives --config dmenu` and select `dmenu.xft` for better font support
-* Run `make install` to symlink this xsession into your home directory
-* Configure autologin in your DM (if you use my xsession)
+* Run `make install` to symlink xsession, dunstrc, etc.
+* If you use my xsession, configure autologin in your DM or just use nodm
+* Install IBus and [UniEmoji](https://github.com/lalomartins/ibus-uniemoji)
