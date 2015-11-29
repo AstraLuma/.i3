@@ -5,6 +5,7 @@ Prints out the keymap for i3, dunst.
 
 import re
 import configparser
+import subprocess
 
 
 class PlaintextPrinter:
@@ -22,62 +23,114 @@ class PlaintextPrinter:
     def key(self, key, action):
         print("\t{}:\t{}".format(key, action))
 
-output = PlaintextPrinter()
-
 
 # i3 Keys
-def i3_subvars(vars, line):
-    def lookup(match):
-        return vars.get(match.group(1), match.group(0))
-    return re.sub(r'\$(\w+)', lookup, line)
+class i3keys:
+    # TODO: Find a real i3 configuration parser
+    # I solved my problem with 4 regex's. Do I have 5 problems now? Or 8?
+    SETVAR = re.compile(r'set\s+(\S+)\s+(.+)')
+    BINDKEY = re.compile(r'bindsym\s+(\S+)\s+(.+)')
+    STARTMODE = re.compile(r'mode\s+(\S+)\s+{')
+    ENDMODE = re.compile(r'}')
 
-# TODO: Find a real i3 configuration parser
-# I solved my problem with 4 regex's. Do I have 5 problems now?
-SETVAR = re.compile(r'set\s+(\S+)\s+(.+)')
-BINDKEY = re.compile(r'bindsym\s+(\S+)\s+(.+)')
-STARTMODE = re.compile(r'mode\s+(\S+)\s+{')
-ENDMODE = re.compile(r'}')
+    def __init__(self):
+        self.vars = {}
 
-i3vars = {}
-i3mode = None
-i3keys = {None: {}}
-for l in open('config'):
-    l = l.strip()
-    m = BINDKEY.match(l)
-    if m:
-        key, action = m.groups()
-        key = i3_subvars(i3vars, key)
-        i3keys[i3mode][key] = action
-        continue
-    m = SETVAR.match(l)
-    if m:
-        name, value = m.groups()
-        i3vars[name[1:]] = value
-        continue
-    m = STARTMODE.match(l)
-    if m:
-        name, = m.groups()
-        name = name.strip('"')
-        i3keys.setdefault(name, {})
-        i3mode = name
-        continue
-    m = ENDMODE.match(l)
-    if m:
-        i3mode = None
-        continue
+    def subvars(self, line):
+        def lookup(match):
+            return self.vars.get(match.group(1), match.group(0))
+        return re.sub(r'\$(\w+)', lookup, line)
 
-for mode, keys in sorted(i3keys.items(), key=lambda i: i[0] if i[0] is not None else ""):
-    with output.section('i3' if mode is None else 'i3::'+mode):
-        for key, action in sorted(keys.items(), key=lambda i: i[0]):
-            output.key(key, action)
+    def parseconfig(self):
+        yield 'mode', (None,)
+        for l in open('config'):
+            l = l.strip()
+            m = self.BINDKEY.match(l)
+            if m:
+                key, action = m.groups()
+                key = self.subvars(key)
+                yield 'bindsym', (key, action)
+                continue
+            m = self.SETVAR.match(l)
+            if m:
+                name, value = m.groups()
+                self.vars[name[1:]] = value
+                continue
+            m = self.STARTMODE.match(l)
+            if m:
+                name, = m.groups()
+                name = name.strip('"')
+                yield 'mode', (name,)
+                continue
+            m = self.ENDMODE.match(l)
+            if m:
+                yield 'mode', (None,)
+                continue
+
+    def __iter__(self):
+        mode = None
+        for typ, vals in self.parseconfig():
+            if typ == 'mode':
+                mode, = vals
+            if typ == 'bindsym':
+                key, action = vals
+                yield ('i3' if mode is None else 'i3::{}'.format(mode)), key, action
 
 
 # dunst keys
+def dunstkeys():
+    dunst = configparser.ConfigParser()
+    dunst.read('dunstrc')
 
-dunst = configparser.ConfigParser()
-dunst.read('dunstrc')
-
-with output.section('dunst'):
     for action in ('close', 'close_all', 'history', 'context'):
         key = dunst['shortcuts'][action]
-        output.key(key, action)
+        yield "dunst", key, action
+
+
+# ibus keys
+class ibuskeys():
+    SCHEMALINE = re.compile(r'^SCHEMA:\s+(.*)$')
+    CONFIGLINE = re.compile(r'^\s+([^:]*):\s+(.*)$')
+
+    def getconfig(self):
+        try:
+            output = subprocess.check_output(['ibus', 'read-config']).decode('utf-8')
+        except subprocess.CalledProcessError:
+            return
+        else:
+            schema = None
+            for line in output.split('\n'):
+                line = line.rstrip()
+                sl = self.SCHEMALINE.match(line)
+                if sl:
+                    schema, = sl.groups()
+                    continue
+                cl = self.CONFIGLINE.match(line)
+                if cl:
+                    opt, value = cl.groups()
+                    yield schema, opt, value
+                    continue
+
+    def __iter__(self):
+        for schema, opt, value in self.getconfig():
+            if (schema, opt) == ('org.freedesktop.ibus.general.hotkey', 'triggers'):
+                value = value.strip("[]'")  # TODO: Real parse
+                value = value.replace('<Super>', 'Mod4+')  # TODO: Figure out a more complete way to do this
+                yield 'ibus', value, 'switch'
+
+
+output = PlaintextPrinter()
+providers = i3keys, dunstkeys, ibuskeys
+if __name__ == '__main__':
+    keys = {}
+    # 1. Collect keys
+    for p in providers:
+        for section, key, action in p():
+            keys.setdefault(section, {})
+            keys[section][key] = action
+
+    # 2. Output keys
+    for section, ka in sorted(keys.items(), key=lambda sk: sk[0]):
+        with output.section(section):
+            for key, action in sorted(ka.items(), key=lambda i: i[0]):
+                output.key(key, action)
