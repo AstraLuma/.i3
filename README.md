@@ -23,6 +23,7 @@ Most of these can be had from your package manager.
 * [`xss`](http://woozle.org/~neale/src/xss.html)
 * [`playerctl`](https://github.com/acrisci/playerctl)
 * [`pulseaudio-ctl`](https://github.com/graysky2/pulseaudio-ctl)
+* `scrot`
 
 Setup
 -----
