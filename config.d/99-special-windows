@@ -5,3 +5,8 @@ for_window [instance="chrome_app_list"] floating enable
 for_window [instance="crx_knipolnnllmklapflnccelgolnpehhpl"] floating enable
 # Journey, just want it floating
 for_window [instance="crx_jlncjaehedpdoinepaejmlpbmdkgmpog"] floating enable
+# galculator, same
+for_window [instance="galculator"] floating enable
+
+# Force starmade to not float
+for_window [instance="(?i)^starmade"] floating disable
