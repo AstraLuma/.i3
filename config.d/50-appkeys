@@ -6,8 +6,6 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+d exec dmenu_run
 # "User friendly" listing of desktop files
 bindsym $mod+d exec --no-startup-id j4-dmenu-desktop
-# Chrome's app list (see 99-special-windows for floating hack for this to work)
-bindsym $mod+Ctrl+d exec google-chrome --show-app-list
 
 # Python console, because I use it enough
 bindsym $mod+p exec gnome-terminal -e python3
