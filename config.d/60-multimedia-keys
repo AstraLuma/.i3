@@ -17,7 +17,7 @@ bindsym XF86AudioPrev exec playerctl previous
 
 # Display
 # TODO: Do some kind of dmenu-based display arranger
-bindsym XF86Display exec xrandr --output VGA1 --auto --output DVI1 --auto
+bindsym XF86Display exec xprofile activate
 
 bindsym XF86ScreenSaver exec ~/.i3/lock
 

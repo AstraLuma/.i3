@@ -8,3 +8,4 @@ export QT_IM_MODULE=ibus
 gnome-keyring-daemon -d
 i3lock -i ~/.i3/login.png
 exec i3
+
