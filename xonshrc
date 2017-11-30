@@ -1,0 +1,199 @@
+"""
+Requirements:
+* keyring python-gitlab requests xontrib-avox xontrib-z paramiko
+
+Also:
+* -e git+https://github.com/astronouth7303/xontrib-salt.git#egg=xontrib_salt
+
+Possibly needed:
+* keyring-jeepney
+
+Need to do:
+* Run `keyring set gitlab url`
+* Run `keyring set gitlab token` (With a token from gitlab)
+* Write out `.pepperrc`
+"""
+$XONSH_SHOW_TRACEBACK = True
+$PROJECT_DIRS = g`~/code` + g`~/src`
+
+xontrib load vox prompt_ret_code avox z
+xontrib load schedule salt
+
+$PATH = g`~/.conda/bin` + g`~/.local/bin` + list($PATH)
+
+${...}.pop('COLUMNS', None)
+${...}.pop('ROWS', None)
+
+# Secrets
+def _get_secret(*pargs):
+    import keyring
+    try:
+        return keyring.get_password(*pargs)
+    except Exception:
+        return None
+
+# Salt minion counts
+
+$PROMPT_FIELDS['prompt_end'] = '\N{SPIRAL SHELL}'
+$PROMPT_FIELDS['minions_up'] = '?'
+$PROMPT_FIELDS['minions_down'] = '?'
+$PROMPT_FIELDS['minions_alert'] = '?'
+
+
+def service_status():
+    return {
+        minion: {service: attrs['state'] for service, attrs in services.items()}
+        for minion, services in salt('*').supervisord.status().items()
+        if isinstance(services, dict)
+    }
+
+
+def _update_minion_counts():
+    try:
+        $PROMPT_FIELDS['minions_up'] = len(salt.manage.present())
+    except Exception:
+        $PROMPT_FIELDS['minions_up'] = '?'
+
+    try:
+        $PROMPT_FIELDS['minions_down'] = len(salt.manage.not_present())
+    except Exception:
+        $PROMPT_FIELDS['minions_down'] = '?'
+
+
+def _update_minion_services():
+    try:
+        status = service_status()
+    except Exception:
+        $PROMPT_FIELDS['minions_alert'] = '?'
+    else:
+        $PROMPT_FIELDS['minions_alert'] = sum(
+            1
+            for minion, services in status.items()
+            if any(True for srv, status in services.items() if status != 'RUNNING')
+        )
+
+
+@events.on_salt_login
+def _update_salt():
+    schedule.every(1).minutes.do(_update_minion_counts)
+    schedule.every(60).minutes.do(_update_minion_services)
+    _update_minion_counts()
+    _update_minion_services()
+
+
+$BOTTOM_TOOLBAR = "\N{ALCHEMICAL SYMBOL FOR SALT} {minions_up}\N{UPWARDS ARROW} {minions_down}\N{DOWNWARDS ARROW} {minions_alert}!"
+
+# Disappearing prompt
+_long_prompt = '{env_name:{} }{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch: {}}{NO_COLOR} {ret_code_color}{ret_code}{prompt_end}{NO_COLOR} '
+_short_prompt = '{ret_code_color}{ret_code}{prompt_end}{NO_COLOR} '
+_hist_length = None
+
+$PROMPT = _long_prompt
+
+@events.on_pre_prompt
+def _adjust_prompt(**kw):
+    global _hist_length
+    lh = len(__xonsh_history__)
+
+    if _hist_length == lh:
+        $PROMPT = _short_prompt
+    else:
+        $PROMPT = _long_prompt
+
+    _hist_length = lh
+
+aliases['check-tmp'] = 'ssh marauder "sudo du -h /tmp | tail -n 1|cut -f 1"'
+
+
+$GITLAB_TOKEN = _get_secret('gitlab', 'token')
+import gitlab
+gl = gitlab.Gitlab(_get_secret('gitlab', 'url'), $GITLAB_TOKEN, api_version=4)
+
+
+def _minion_log(args, stdin=None):
+    minion = args[0]
+    return salt[minion].cmd.run('cat /var/log/salt/minion') + '\n'
+aliases['minion-log'] = _minion_log
+
+
+def _master_log(args, stdin=None):
+    return salt.salt.cmd('cmd.run', 'cat /var/log/salt/master') + '\n'
+aliases['master-log'] = _master_log
+
+
+def _minion_ssh(args, stdin=None):
+    minion = args[0]
+    ip = salt[minion].network.ip_addrs()[0]
+    sudo ssh @(ip) @(args[1:])1`
+aliases['minion-ssh'] = _minion_ssh
+
+
+def _minion_rdp(args, stdin=None):
+    minion = args[0]
+    ip = salt[minion].network.ip_addrs()[0]
+    rdesktop @(ip) -g 1152x864 @(args[1:])
+aliases['minion-rdp'] = _minion_rdp
+
+
+
+import xonsh.tools
+
+
+@xonsh.tools.foreground
+def _salt_events(args, stdin=None):
+    from pprint import pprint
+    for data in salt.events():
+        print(data['tag'], end=': ')
+        pprint(data['data'])
+aliases['saltevents'] = _salt_events
+
+
+def _walk_up_for_node(cwd, suffix):
+    import os
+    if cwd is ...:
+        cwd = os.getcwd()
+
+    old = None
+    while cwd != old:
+        p = os.path.join(cwd, suffix)
+        if os.path.exists(p):
+            return p
+        else:
+            old, cwd = cwd, os.path.dirname(cwd)
+
+
+@events.on_chdir
+def _node_bin(olddir, newdir, **_):
+    oldbin = _walk_up_for_node(olddir, "node_modules/.bin")
+    newbin = _walk_up_for_node(newdir, "node_modules/.bin")
+
+    if oldbin is not None:
+        $PATH.remove(oldbin)  # BUG: https://github.com/xonsh/xonsh/issues/2468
+
+    if newbin is not None:
+        $PATH.insert(0, newbin)
+
+
+def connect_ssh(hostname, **ops):
+    client = paramiko.SSHClient()
+    client._policy = paramiko.WarningPolicy()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    ssh_config = paramiko.SSHConfig()
+    user_config_file = os.path.expanduser("~/.ssh/config")
+    if os.path.exists(user_config_file):
+        with open(user_config_file) as f:
+            ssh_config.parse(f)
+
+    cfg = {'hostname': hostname}
+    cfg.update(ops)
+
+    user_config = ssh_config.lookup(cfg['hostname'])
+    for k in ('hostname', 'username', 'port'):
+        if k in user_config:
+            cfg[k] = user_config[k]
+
+    if 'proxycommand' in user_config:
+        cfg['sock'] = paramiko.ProxyCommand(user_config['proxycommand'])
+
+    client.connect(**cfg)

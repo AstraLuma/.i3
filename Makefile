@@ -6,3 +6,4 @@ install: config
 	ln -fs $(realpath xsession) ~/.xsession
 	mkdir -p ~/.config/dunst
 	ln -fs $(realpath dunstrc) ~/.config/dunst/dunstrc
+	ln -fs $(realpath xonshrc) ~/.xonshrc
