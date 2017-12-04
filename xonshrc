@@ -197,3 +197,6 @@ def connect_ssh(hostname, **ops):
         cfg['sock'] = paramiko.ProxyCommand(user_config['proxycommand'])
 
     client.connect(**cfg)
+
+
+http = __import__('requests').Session()
