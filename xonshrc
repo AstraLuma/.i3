@@ -124,7 +124,7 @@ aliases['master-log'] = _master_log
 def _minion_ssh(args, stdin=None):
     minion = args[0]
     ip = salt[minion].network.ip_addrs()[0]
-    sudo ssh @(ip) @(args[1:])
+    ssh -i ~/.ssh/root.pem @('root@'+ip) @(args[1:])
 aliases['minion-ssh'] = _minion_ssh
 
 
