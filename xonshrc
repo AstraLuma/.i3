@@ -168,7 +168,7 @@ def _node_bin(olddir, newdir, **_):
     newbin = _walk_up_for_node(newdir, "node_modules/.bin")
 
     if oldbin is not None:
-        $PATH.remove(oldbin)  # BUG: https://github.com/xonsh/xonsh/issues/2468
+        $PATH.remove(oldbin)
 
     if newbin is not None:
         $PATH.insert(0, newbin)
