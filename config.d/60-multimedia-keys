@@ -20,6 +20,7 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym XF86Display exec xprofile activate
 
 bindsym XF86ScreenSaver exec ~/.i3/lock
+bindsym $mod+shift+ctrl+l exec ~/.i3/lock
 
 # TODO: What should these do?
 # XF86Battery, XF86TouchpadToggle

@@ -16,6 +16,8 @@ Need to do:
 $XONSH_SHOW_TRACEBACK = True
 $PROJECT_DIRS = g`~/code` + g`~/src`
 
+$REQUESTS_CA_BUNDLE = $CURL_CA_BUNDLE = "/etc/ssl/certs/ca-certificates.crt"
+
 xontrib load vox prompt_ret_code avox z
 xontrib load schedule salt
 
